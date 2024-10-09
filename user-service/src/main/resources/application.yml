@@ -4,4 +4,34 @@ server:
 spring:
   application:
     name: user-service
+  datasource:
+#    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS db
 
+    driver-class-name: org.h2.Driver
+    username: u
+    password: l
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: db
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: db
+  flyway:
+    enabled: false
+#    user: abol
+#    password: abol
+#    url: 'jdbc:h2:mem:flyway_db;DB_CLOSE_DELAY=-1'
+#    createSchemas: true
+#    schemas: PUBLIC
+jwt:
+  secret: MiAVzqUXy5Tfr1kVIGpPMiAVzqUXy5Tfr1kVIGpP
+  expiration: 86400
+  h2:
+    console:
+      enabled: true

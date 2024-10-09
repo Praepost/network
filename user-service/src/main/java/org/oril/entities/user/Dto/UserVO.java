@@ -1,4 +1,4 @@
-package org.oril.entities;
+package org.oril.entities.user.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,6 @@ public class UserVO {
 
     private String id;
     private String email;
-    private String password;
     private String role;
 }
 
