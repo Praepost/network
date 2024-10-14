@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
@@ -18,7 +21,21 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request, HttpServletResponse response) {
+        AuthResponse authResponse = authService.register(request);
+
+        Cookie cookie = new Cookie("refresh_token", authResponse.getRefreshToken());//создаем объект Cookie,
+        //в конструкторе указываем значения для name и value
+        cookie.setPath("/");//устанавливаем путь
+        cookie.setMaxAge(86400);//здесь устанавливается время жизни куки
+        response.addCookie(cookie);//добавляем Cookie в запрос
+        response.setContentType("text/plain");//устанавливаем контекст
+
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping(value = "/generate-token")
     public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        return ResponseEntity.ok(authService.generateToken(request));
     }
 }
