@@ -26,11 +26,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users/**").permitAll()
+                .antMatchers("/users/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .logout()
-                .logoutUrl("/logout")
+                .logoutUrl("/users/logout")
                 .logoutSuccessUrl("/auth/login");
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

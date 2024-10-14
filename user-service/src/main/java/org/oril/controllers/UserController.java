@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/users")
 @AllArgsConstructor
+@RequestMapping(value = "/users")
 public class    UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping(value = "/auth")
     public ResponseEntity save(@RequestBody AuthRequest authRequest) throws UserFoundException {
         if(userService.notExists(authRequest)){
             return ResponseEntity.ok(userService.save(authRequest));

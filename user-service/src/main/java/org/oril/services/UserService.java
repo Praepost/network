@@ -1,6 +1,7 @@
 package org.oril.services;
 
 import lombok.AllArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 import org.oril.entities.role.Role;
 import org.oril.entities.role.repository.RoleRepo;
 import org.oril.entities.user.Dto.AuthRequest;
@@ -27,11 +28,15 @@ public class UserService {
         String userId = String.valueOf(new Date().getTime());
         user.setId(Long.valueOf(userId));
         user.setRoles(roles);
+        user.setEmail(authRequest.getEmail());
+        user.setPassword(BCrypt.hashpw(authRequest.getPassword(), BCrypt.gensalt()));
 
         UserVO userVO = new UserVO(
                 user.getId().toString(),
                 user.getEmail(),
                 user.getRoles().stream().findFirst().get().toString());
+
+        userRepo.save(user);
 
         return userVO;
 
