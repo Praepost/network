@@ -1,9 +1,11 @@
 package org.oril.entities.role;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-
-import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
