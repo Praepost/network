@@ -19,7 +19,7 @@ public class UserService {
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
 
-    public UserVO save(AuthRequest authRequest) throws UserFoundException {
+    public UserVO register(AuthRequest authRequest) throws UserFoundException {
         Role role = roleRepo.findByName("ROLE_USER").get();
         Set roles = new HashSet();
         roles.add(role);
@@ -50,5 +50,24 @@ public class UserService {
         }
 
         return true;
+    }
+
+    public UserVO getUsers(String id) throws UserFoundException {
+        Optional<User> userOptional = userRepo.findById(Long.valueOf(id));
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+
+            UserVO userVO = new UserVO(
+                    user.getId().toString(),
+                    user.getEmail(),
+                    user.getRoles().stream().findFirst().get().toString());
+
+            userRepo.save(user);
+
+            return userVO;
+        }
+
+        throw new UserFoundException("пользователь не найден");
     }
 }

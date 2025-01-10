@@ -3,14 +3,12 @@ package org.oril.controllers;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.oril.entities.AccessTokenResponse;
 import org.oril.entities.AuthRequest;
 import org.oril.entities.AuthResponse;
 import org.oril.services.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,7 +32,17 @@ public class AuthController {
     }
 
     @PostMapping(value = "/generate-token")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.generateToken(request));
+    public ResponseEntity<AccessTokenResponse> generateToken(@CookieValue(value = "refresh_token") String refreshToken, HttpServletResponse response) {
+        AuthResponse authResponse = authService.generateTokens(refreshToken);
+
+        Cookie cookie = new Cookie("refresh_token", authResponse.getRefreshToken());//создаем объект Cookie,
+        //в конструкторе указываем значения для name и value
+        cookie.setPath("/");//устанавливаем путь
+        cookie.setMaxAge(86400);//здесь устанавливается время жизни куки
+        response.addCookie(cookie);//добавляем Cookie в запрос
+        response.setContentType("text/plain");//устанавливаем
+
+        return ResponseEntity.ok(new AccessTokenResponse(authResponse.getAccessToken()));
+
     }
 }

@@ -28,7 +28,7 @@ public class JwtUtil {
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(secret.getBytes()).build().parseClaimsJws(token).getBody();
     }
 
     public Date getExpirationDate(String token) {
@@ -53,24 +53,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    private boolean isExpired(String token) {
-        return getExpirationDate(token).before(new Date());
-    }
+//    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+//        final Claims claims = extractAllClaims(token);
+//        return claimsResolver.apply(claims);
+//    }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    //извлечение authorities (внутри валидация токена)
-    public String extractAuthorities(String token) {
-        Function<Claims, String> claimsListFunction = claims -> (String) claims.get("authorities");
-
-        return extractClaim(token, claimsListFunction);
-    }
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    private Claims extractClaim(String token) {
+        return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
     }
 
     private Claims extractAllClaims(String token) {
