@@ -32,12 +32,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/users/auth").permitAll()
                     .requestMatchers("/users/auth/**").permitAll()
+                    .requestMatchers("/users/is-expired").permitAll()
+                    .requestMatchers("/users/is-expired/**").permitAll()
                     .anyRequest()
                     .authenticated()
             )
             .addFilterBefore(
-                jwtFilter,
-                UsernamePasswordAuthenticationFilter.class
+                jwtFilter, UsernamePasswordAuthenticationFilter.class
             );
         return http.build();
     }

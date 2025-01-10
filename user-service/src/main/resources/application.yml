@@ -30,7 +30,7 @@ spring:
 #    createSchemas: true
 #    schemas: PUBLIC
 jwt:
-  secret: MiAVzqUXy5Tfr1kVIGpPMiAVzqUXy5Tfr1kVIGpP
+  secret: 3MB3MT6N4DGzO29Z9PA9Cwuf3qj2zAoe8PpJrfM3UcYiBUXRSKsJOGZdE7GcFIz61GJChzHundRViX1asZKIMtFL0nWWmrTKOrqUQAA3faHHUH7nFcZjaPyASNHj9bUlKJYjaQ
   expiration: 86400
   h2:
     console:

@@ -1,15 +1,12 @@
 package org.oril.services;
 
-import java.io.IOException;
+import io.netty.handler.codec.http.HttpMethod;
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.oril.entities.AuthRequest;
 import org.oril.entities.AuthResponse;
 import org.oril.entities.UserVO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -22,7 +19,7 @@ public class AuthService {
     public AuthResponse register(AuthRequest request) {
         //do validation if user exists in DB
         request.setPassword(
-            BCrypt.hashpw(request.getPassword(), BCrypt.gensalt())
+                BCrypt.hashpw(request.getPassword(), BCrypt.gensalt())
         );
 
         //
@@ -35,20 +32,20 @@ public class AuthService {
         //                .blockFirst();
 
         UserVO registeredUser = restTemplate.postForObject(
-            "http://user-service/users/auth",
-            request,
-            UserVO.class
+                "http://user-service/users/auth",
+                request,
+                UserVO.class
         );
 
         String accessToken = jwtUtil.generate(
-            registeredUser.getId(),
-            registeredUser.getRole(),
-            "ACCESS"
+                registeredUser.getId(),
+                registeredUser.getRole(),
+                "ACCESS"
         );
         String refreshToken = jwtUtil.generate(
-            registeredUser.getId(),
-            registeredUser.getRole(),
-            "REFRESH"
+                registeredUser.getId(),
+                registeredUser.getRole(),
+                "REFRESH"
         );
 
         return new AuthResponse(accessToken, refreshToken);
@@ -65,7 +62,30 @@ public class AuthService {
     //        return ResponseEntity.ok().body(HttpStatus.OK);//получилось как бы два раза статус ответа установили, выбирайте какой вариант лучше
     //    }
 
-    public AuthResponse generateToken(AuthRequest request) {
+    public AuthResponse generateTokens(String refreshToken){
+        String id = jwtUtil.getId(refreshToken);
+
+        UserVO user = restTemplate.getForObject("http://user-service/users/is-expired/{id}", UserVO.class, id);
+
+
+//        UserVO user = restTemplate.postForObject(
+//                "http://user-service/users/is-expired",
+//                id,
+//                UserVO.class);
+
+        if(user!= null){
+            String accessToken = jwtUtil.generate(
+                    user.getId(),
+                    user.getRole(),
+                    "ACCESS");
+            String refreshTokenResult = jwtUtil.generate(
+                    user.getId(),
+                    user.getRole(),
+                    "REFRESH");
+
+            return new AuthResponse(accessToken, refreshTokenResult);
+        }
         return null;
     }
+
 }

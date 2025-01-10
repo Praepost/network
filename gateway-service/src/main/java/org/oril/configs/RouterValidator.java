@@ -12,7 +12,8 @@ public class RouterValidator {
     //открытые запросы
     public static final List<String> openEndpoints = List.of(
             "/auth/register",
-            ""
+            "/auth/generate-token",
+            "/users/is-expired"
     );
 
     public Predicate<ServerHttpRequest> isSecured =
